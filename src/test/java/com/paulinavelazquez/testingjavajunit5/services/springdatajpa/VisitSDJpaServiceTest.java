@@ -17,6 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,57 +34,73 @@ class VisitSDJpaServiceTest {
     @DisplayName("Test Find All")
     @Test
     void findAll() {
+        // given
         Visit visit = new Visit();
         Set<Visit> visits = new HashSet<Visit>();
         visits.add(visit);
-        when(visitRepository.findAll()).thenReturn(visits);
+        given(visitRepository.findAll()).willReturn(visits);
+
+        // when
         Set<Visit> foundVisits = service.findAll();
-        assertNotNull(foundVisits);
-        // Junit5
+
+        // then
+        then(visitRepository).should().findAll();
         assertEquals(1, foundVisits.size());
-        // AssertJ
-        assertThat(foundVisits).hasSize(1);
-        verify(visitRepository).findAll();
+        assertNotNull(foundVisits);
     }
 
     @DisplayName("Test Find By Id")
     @Test
     void findById() {
+        // given
         Visit visit = new Visit();
-        when(visitRepository.findById(anyLong())).thenReturn(Optional.of(visit));
+        given(visitRepository.findById(anyLong())).willReturn(Optional.of(visit));
+
+        // when
         Visit foundVisit = service.findById(1L);
-        // JUnit5
+
+        // then
+        then(visitRepository).should().findById(anyLong());
         assertNotNull(foundVisit);
-        // AssertJ
-        assertThat(foundVisit).isNotNull();
-        verify(visitRepository).findById(1L);
     }
 
     @DisplayName("Test Save")
     @Test
     void save() {
-        Visit visit = new Visit(); // Returning this object
-        when(visitRepository.save(any(Visit.class))).thenReturn(visit);
-        Visit savedVisit = service.save(new Visit()); // Saving another new object
-        // JUnit 5
+        // given
+        Visit visit = new Visit();
+        given(visitRepository.save(any(Visit.class))).willReturn(visit);
+
+        // when
+        Visit savedVisit = service.save(new Visit());
+
+        // then
+        then(visitRepository).should().save(any(Visit.class));
         assertNotNull(savedVisit);
-        // Assertj
-        assertThat(savedVisit).isNotNull();
-        verify(visitRepository).save(any(Visit.class));
     }
 
     @DisplayName("Test Delete")
     @Test
     void delete() {
+        // given
         Visit visit = new Visit();
+
+        // when
         service.delete(visit);
-        verify(visitRepository).delete(any(Visit.class));
+
+        // then
+        then(visitRepository).should().delete(any(Visit.class));
     }
 
     @DisplayName("Test Delete By Id")
     @Test
     void deleteById() {
+        // given - none
+
+        // when
         service.deleteById(1L);
-        verify(visitRepository).deleteById(anyLong());
+
+        // then
+        then(visitRepository).should().deleteById(anyLong());
     }
 }
