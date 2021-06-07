@@ -14,6 +14,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,13 +43,17 @@ class SpecialitySDJpaServiceTest {
     @DisplayName("Find By Id BDD Test")
     @Test
     void findByIdBddTest() {
+        // given (setup of the text)
         Speciality speciality = new Speciality();
-
         given(specialityRepository.findById(1L)).willReturn(Optional.of(speciality));
 
+        // when (action of the test - ie when method is called)
         Speciality foundSpeciality = service.findById(1L);
+
+        // then (verification of expected results)
         assertNotNull(foundSpeciality);
-        verify(specialityRepository).findById(anyLong());
+        then(specialityRepository).should().findById(anyLong());
+        then(specialityRepository).shouldHaveNoMoreInteractions();
     }
 
     @Test
